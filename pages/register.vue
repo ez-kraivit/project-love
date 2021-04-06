@@ -7,14 +7,21 @@
             <v-row>
               <v-col cols="12" sm="12" lg="12" align="center">
                 <v-text-field
-                v-model="username"
+                  v-model="name"
+                  label="name"
+                  autocomplete="off"
+                  type="text"
+                  solo
+                ></v-text-field>
+                <v-text-field
+                  v-model="username"
                   label="username"
                   autocomplete="off"
                   type="email"
                   solo
                 ></v-text-field>
                 <v-text-field
-                    v-model="password"
+                  v-model="password"
                   label="password"
                   autocomplete="off"
                   type="password"
@@ -22,8 +29,13 @@
                 ></v-text-field>
               </v-col>
               <v-col>
-                <v-btn elevation="2" color="primary" @click="SignInUser({username,password})">Login </v-btn>
-                <v-btn elevation="2" color="primary" to="/register">Register </v-btn>
+                <v-btn
+                  elevation="2"
+                  color="primary"
+                  @click="CreateUser({ name,username, password })"
+                  >Register
+                </v-btn>
+                <v-btn elevation="2" color="primary" to="/login">Back </v-btn>
               </v-col>
             </v-row>
           </v-card-text>
@@ -34,22 +46,17 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import { mapActions } from "vuex";
 export default {
-    data() {
-        return {
-            username:null,
-            password:null,
-        }
-    },
-    methods: {
-        ...mapActions(['SignInUser']),
-        // Login(){
-        //     this.$store.dispatch("SignInUser",{
-        //         username:this.username,
-        //         password:this.password
-        //     })
-        // }
-    },
-}
+  data() {
+    return {
+      name: null,
+      username: null,
+      password: null,
+    };
+  },
+  methods: {
+    ...mapActions(["CreateUser"]),
+  },
+};
 </script>
