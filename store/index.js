@@ -25,13 +25,18 @@ export default {
         CreateUser({ commit }, payload) {
             return firebase.auth().createUserWithEmailAndPassword(payload.username, payload.password)
                 .then(async(userCredential) => {
-                    console.log(userCredential.user.uid)
+                    console.log(userCredential.user)
                     let data = {
                         uid : userCredential.user.uid,
                         "username":payload.username,
                         "name":payload.name
                     }
-                    return await this.$axios.$post(process.env.apiUrl+`/create/profile`,data).then(async(res)=>{                        
+                    return await this.$axios.$post(process.env.apiUrl+`/create/profile`,data,
+                    {
+                        headers:{
+                            'Authorization': `Bearer ${userCredential.user.za}`
+                        }
+                    }).then(async(res)=>{                        
                         // commit('setUser', userCredential.user)
                         commit('setName', payload.name)
                         commit('setUsername', payload.username)
@@ -45,11 +50,18 @@ export default {
                 });
         },
         SignInUser({ commit }, payload) {
-            return firebase.auth().signInWithEmailAndPassword(payload.username,payload.password).then((userCredential) => {
+            return firebase.auth().signInWithEmailAndPassword(payload.username,payload.password).then(async(userCredential) => {
+                return await this.$axios.$post(process.env.apiUrl+`/profile`,null,
+                {
+                    headers:{
+                        'Authorization': `Bearer ${userCredential.user.za}`
+                    }
+                }).then(async(res)=>{    
                 // commit('setUser', userCredential.user)
-                commit('setUsername', payload.username)
-                commit('setName', 'Kraivit')
+                commit('setUsername', res.username)
+                commit('setName',res.name)
                 this.$router.push('/')
+                })
               })
         },
         SignOut({ commit }) {
