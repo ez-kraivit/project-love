@@ -7,32 +7,35 @@
             <v-row>
               <v-col cols="12" sm="12" lg="12" align="center">
                 <v-text-field
-                  v-model="name"
+                  v-model.trim.lazy="name"
                   label="name"
                   autocomplete="off"
                   type="text"
                   solo
+                  required
                 ></v-text-field>
                 <v-text-field
-                  v-model="username"
+                  v-model.trim.lazy="username"
                   label="username"
                   autocomplete="off"
                   type="email"
                   solo
+                  required
                 ></v-text-field>
                 <v-text-field
-                  v-model="password"
+                  v-model.trim.lazy="password"
                   label="password"
                   autocomplete="off"
                   type="password"
                   solo
+                  required
                 ></v-text-field>
               </v-col>
               <v-col>
                 <v-btn
                   elevation="2"
                   color="primary"
-                  @click="CreateUser({ name,username, password })"
+                  v-on:click="CreateUser({ name, username, password })"
                   >Register
                 </v-btn>
                 <v-btn elevation="2" color="primary" to="/login">Back </v-btn>

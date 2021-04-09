@@ -3,11 +3,11 @@ export default {
     state: () => ({
         username: null,
         name: null,
-        user: null,
+        token: null,
     }),
     mutations: {
-        setUser(state, payload) {
-            state.user = payload
+        setToken(state, payload) {
+            state.token = payload
         },
         setUsername(state, payload) {
             state.username = payload
@@ -16,16 +16,18 @@ export default {
             state.name = payload
         },
         setClear(state) {
-            state.user = null
             state.username = null
             state.name = null
+            state.token = null
         }
     },
     actions: {
         CreateUser({ commit }, payload) {
+            if(payload.username===null||payload.password===null||payload.name===null){
+                return this.$router.push('/register')
+            }
             return firebase.auth().createUserWithEmailAndPassword(payload.username, payload.password)
                 .then(async(userCredential) => {
-                    console.log(userCredential.user)
                     let data = {
                         uid : userCredential.user.uid,
                         "username":payload.username,
@@ -37,37 +39,45 @@ export default {
                             'Authorization': `Bearer ${userCredential.user.za}`
                         }
                     }).then(async(res)=>{                        
-                        // commit('setUser', userCredential.user)
+                        commit('setToken',userCredential.user.za)
                         commit('setName', payload.name)
                         commit('setUsername', payload.username)
                         this.$router.push('/')
-                    })
+                    }).catch((error) => {
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        this.$router.push('/login')
+                      });
                 })
-                .catch((error) => {
-                    commit('setClear')
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                });
         },
-        SignInUser({ commit }, payload) {
+        SignInUser({ commit,redirect }, payload) {
+            // if(payload.username===null||payload.password===null){
+            //     return this.$router.push('/login')
+            // }
             return firebase.auth().signInWithEmailAndPassword(payload.username,payload.password).then(async(userCredential) => {
-                return await this.$axios.$post(process.env.apiUrl+`/profile`,null,
+                await this.$axios.$post(process.env.apiUrl+`/profile`,null,
                 {
                     headers:{
                         'Authorization': `Bearer ${userCredential.user.za}`
                     }
                 }).then(async(res)=>{    
-                // commit('setUser', userCredential.user)
+                commit('setToken',userCredential.user.za)
                 commit('setUsername', res.username)
                 commit('setName',res.name)
                 this.$router.push('/')
                 })
-              })
+              }).catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                this.$router.push('/login')
+              });
         },
         SignOut({ commit }) {
-            commit('setClear')
-            this.$router.push('/login')
-            return this
+            return firebase.auth().signOut().then(() => {
+                commit('setClear')
+                window.localStorage.clear()
+                this.$router.push('/login')
+            })
         }
     }
 }

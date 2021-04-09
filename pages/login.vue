@@ -7,22 +7,24 @@
             <v-row>
               <v-col cols="12" sm="12" lg="12" align="center">
                 <v-text-field
-                v-model="username"
+                 v-model.trim.lazy="username"
                   label="username"
                   autocomplete="off"
                   type="email"
                   solo
+                  required
                 ></v-text-field>
                 <v-text-field
-                    v-model="password"
+                  v-model.trim.lazy="password"
                   label="password"
                   autocomplete="off"
                   type="password"
                   solo
+                  required
                 ></v-text-field>
               </v-col>
               <v-col>
-                <v-btn elevation="2" color="primary" @click="SignInUser({username,password})">Login </v-btn>
+                <v-btn elevation="2" color="primary" v-on:click="SignInUser({username,password})">Login </v-btn>
                 <v-btn elevation="2" color="primary" to="/register">Register </v-btn>
               </v-col>
             </v-row>

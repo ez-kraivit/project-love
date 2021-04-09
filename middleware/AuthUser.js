@@ -1,5 +1,6 @@
-export default function ({ store, redirect }) {
+export default function ({ store, redirect,route }) {
     if (!store.state.username) {
-      return redirect('/login')
+      window.localStorage.clear()
+      redirect({path:'/login'})
     }
   }
